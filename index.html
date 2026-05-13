@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placement Countdown — Creative Business</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a1a;
+    --accent: #ff6b35;
+    --accent2: #ffd166;
+    --text: #f0ede6;
+    --muted: #8a8a9a;
+    --card-bg: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.08);
+    --glow: rgba(255,107,53,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(255,107,53,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(255,209,102,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(90,50,180,0.05) 0%, transparent 60%);
+    animation: drift 20s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+
+  @keyframes drift {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-3%, 3%) rotate(2deg); }
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; }
+
+  .topbar {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--card-border);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(10,10,26,0.7);
+  }
+
+  .topbar-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .topbar-logo {
+    height: 28px;
+    width: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .topbar-buas {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .hero {
+    padding: 48px 24px 32px;
+    text-align: center;
+    animation: fadeUp 0.8s ease-out;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-eyebrow::before,
+  .hero-eyebrow::after {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 8vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent2) 50%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 340px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .countdown-section {
+    padding: 24px;
+    animation: fadeUp 0.8s ease-out 0.2s both;
+  }
+
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .countdown-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 16px 8px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .countdown-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,107,53,0.3);
+  }
+
+  .countdown-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0.6;
+  }
+
+  .cd-number {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(28px, 7vw, 40px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .cd-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .progress-section {
+    padding: 8px 24px 32px;
+    max-width: 400px;
+    margin: 0 auto;
+    animation: fadeUp 0.8s ease-out 0.3s both;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .progress-pct {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: var(--card-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 1.5s ease-out;
+    box-shadow: 0 0 12px var(--glow);
+  }
+
+  .checklist-section {
+    padding: 0 24px 32px;
+    max-width: 400px;
+    margin: 0 auto;
+    animation: fadeUp 0.8s ease-out 0.4s both;
+  }
+
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-left: 4px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: border-color 0.3s;
+  }
+
+  .check-item:hover {
+    border-color: rgba(255,107,53,0.2);
+  }
+
+  .check-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--accent);
+  }
+
+  .check-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .check-text small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  .cta-section {
+    padding: 0 24px 32px;
+    max-width: 400px;
+    margin: 0 auto;
+    animation: fadeUp 0.8s ease-out 0.5s both;
+  }
+
+  .cta-card {
+    background: linear-gradient(135deg, rgba(255,107,53,0.12) 0%, rgba(255,209,102,0.08) 100%);
+    border: 1px solid rgba(255,107,53,0.2);
+    border-radius: 20px;
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(255,107,53,0.15), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cta-emoji {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .cta-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .cta-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--accent), #e85d2a);
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(255,107,53,0.3);
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(255,107,53,0.4);
+  }
+
+  .cta-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dates-section {
+    padding: 0 24px 32px;
+    max-width: 400px;
+    margin: 0 auto;
+    animation: fadeUp 0.8s ease-out 0.55s both;
+  }
+
+  .date-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .date-row:last-child { border-bottom: none; }
+
+  .date-what {
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .date-when {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    white-space: nowrap;
+  }
+
+  .footer {
+    padding: 24px;
+    text-align: center;
+    border-top: 1px solid var(--card-border);
+    animation: fadeUp 0.8s ease-out 0.6s both;
+  }
+
+  .footer p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .cd-number.ticking {
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  .toggle-bar {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 24px 8px;
+    max-width: 400px;
+    margin: 0 auto;
+    animation: fadeUp 0.8s ease-out 0.15s both;
+  }
+
+  .toggle-btn {
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--muted);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .toggle-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 2px 12px rgba(255,107,53,0.3);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar">
+    <span class="topbar-label">Creative Business</span>
+    <img src="https://www.buas.nl/themes/custom/breda_university/apps/drupal/logo.svg" alt="Breda University of Applied Sciences" class="topbar-logo">
+  </div>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Work Placement</div>
+    <h1>Your placement starts in...</h1>
+    <p class="hero-sub">Are you ready? Check the countdown and make sure you've got everything sorted.</p>
+  </div>
+
+  <div class="toggle-bar">
+    <button class="toggle-btn active" id="btn-start">First block starting 31 Aug 2026</button>
+  </div>
+
+  <div class="countdown-section">
+    <div class="countdown-grid">
+      <div class="countdown-card">
+        <div class="cd-number" id="cd-days">—</div>
+        <div class="cd-label">Days</div>
+      </div>
+      <div class="countdown-card">
+        <div class="cd-number" id="cd-hours">—</div>
+        <div class="cd-label">Hours</div>
+      </div>
+      <div class="countdown-card">
+        <div class="cd-number" id="cd-mins">—</div>
+        <div class="cd-label">Min</div>
+      </div>
+      <div class="countdown-card">
+        <div class="cd-number ticking" id="cd-secs">—</div>
+        <div class="cd-label">Sec</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-label">Time until placement</span>
+      <span class="progress-pct" id="progress-pct">—</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <div class="section-title">✦ Have you done this yet?</div>
+    <div class="check-item">
+      <div class="check-icon">1</div>
+      <div class="check-text">
+        Reviewed placement info on Brightspace
+        <small>All documents, deadlines and guidelines are there</small>
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">2</div>
+      <div class="check-text">
+        CV and cover letter up to date
+        <small>Make sure your application kit is ready to go</small>
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">3</div>
+      <div class="check-text">
+        Created a LinkedIn profile
+        <small>Build your professional presence and start connecting</small>
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">4</div>
+      <div class="check-text">
+        Attend the work placement preparation courses
+        <small>Essential sessions to get you ready — don't miss them</small>
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon">5</div>
+      <div class="check-text">
+        Started exploring companies
+        <small>Browse vacancies and discover which direction suits you</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="dates-section">
+    <div class="section-title">✦ Key dates</div>
+    <div class="date-row">
+      <span class="date-what">First day of placement</span>
+      <span class="date-when">31 Aug 2026</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Work Placement Office — Creative Business<br>
+    Questions? Email <a href="mailto:agmplacementoffice@buas.nl">agmplacementoffice@buas.nl</a></p>
+  </div>
+
+</div>
+
+<script>
+  const target = new Date('2026-08-31T00:00:00');
+  const windowStart = new Date('2025-09-01T00:00:00');
+
+  function update() {
+    const now = new Date();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = '0';
+      document.getElementById('cd-hours').textContent = '0';
+      document.getElementById('cd-mins').textContent = '0';
+      document.getElementById('cd-secs').textContent = '0';
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('progress-pct').textContent = '100%';
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('cd-days').textContent = days;
+    document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+    document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+
+    const totalWindow = target - windowStart;
+    const elapsed = now - windowStart;
+    const pct = Math.min(100, Math.max(0, (elapsed / totalWindow) * 100));
+    document.getElementById('progress-fill').style.width = pct.toFixed(1) + '%';
+    document.getElementById('progress-pct').textContent = pct.toFixed(0) + '% elapsed';
+  }
+
+  update();
+  setInterval(update, 1000);
+</script>
+</body>
+</html>
